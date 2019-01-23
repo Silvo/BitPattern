@@ -29,7 +29,7 @@ class BitPattern(object):
 
         for c in chars:
             continuous_parts = []
-            for k, g in groupby(enumerate(chars[c]), lambda x: x[0] - x[1]):
+            for _, g in groupby(enumerate(chars[c]), lambda x: x[0] - x[1]):
                 continuous_parts.append([e[1] for e in g])
 
             parts = []
@@ -45,16 +45,12 @@ class BitPattern(object):
 
     def _build_masks(self, parts):
         ones = parts.get('1', [])
-        bits_handled = 0
         for p in sorted(ones, key=lambda x: x.shift):
             self.positive_mask |= (p.mask << p.shift)
-            bits_handled += p.bits
 
         zeros = parts.get('0', [])
-        bits_handled = 0
         for p in sorted(zeros, key=lambda x: x.shift):
             self.negative_mask |= (p.mask << p.shift)
-            bits_handled += p.bits
 
     def match(self, value):
         match = (value & self.positive_mask) == self.positive_mask
